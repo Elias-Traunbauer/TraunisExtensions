@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Reflection;
 
 namespace TraunisExtensions
@@ -11,7 +12,7 @@ namespace TraunisExtensions
         /// <typeparam name="T"></typeparam>
         /// <param name="collection">Input collection</param>
         /// <param name="action">Action to execute on collections items</param>
-        public static void ForEach<T>(this T collection, Action<T> action) where T : IEnumerable<T>
+        public static void Foreach<T>(this T collection, Action<T> action) where T : IEnumerable<T>
         {
             foreach (var item in collection)
             {
@@ -27,12 +28,44 @@ namespace TraunisExtensions
         /// <param name="collection">Input collection</param>
         /// <param name="func">Function to calculate result object</param>
         /// <returns>Collection of results</returns>
-        public static IEnumerable<R> ForEachReturn<T, R>(this T collection, Func<T, R> func) where T : IEnumerable<T>
+        public static IEnumerable<R> ForeachReturn<T, R>(this T collection, Func<T, R> func) where T : IEnumerable<T>
         {
             List<R> list = new List<R>();
             foreach (var item in collection)
             {
                 list.Add(func(item));
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Executes code on every element in a collection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection">Input collection</param>
+        /// <param name="action">Action to execute on collections items</param>
+        public static void Foreach<T>(this T[] collection, Action<T> action)
+        {
+            foreach (var item in collection)
+            {
+                action(item);
+            }
+        }
+
+        /// <summary>
+        /// Executes code on every element in a collection and returns a collection containing the result of the action
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="collection">Input collection</param>
+        /// <param name="func">Function to calculate result object</param>
+        /// <returns>Collection of results</returns>
+        public static R[] ForeachReturn<T, R>(this T[] collection, Func<T, R> func)
+        {
+            R[] list = new R[collection.Length];
+            for (int i = 0; i < collection.Length; i++)
+            {
+                list[i] = func(collection[i]);
             }
             return list;
         }
@@ -66,7 +99,7 @@ namespace TraunisExtensions
         /// <typeparam name="T">Type of the array</typeparam>
         /// <param name="array">Array to iterate through</param>
         /// <param name="action">Action to execute for every element. Parameters are: int x, int y, T value</param>
-        public static void ForEach<T>(this T[,] array, Action<int, int, T> action)
+        public static void Foreach<T>(this T[,] array, Action<int, int, T> action)
         {
             for (int y = 0; y < array.GetLength(0); y++)
             {
@@ -84,7 +117,7 @@ namespace TraunisExtensions
         /// <param name="array">Array to iterate through</param>
         /// <param name="action">Action to execute for every element. Parameters are: int x, int y, T value</param>
         /// <param name="selector">Determines on which values to execute the action on</param>
-        public static void ForEach<T>(this T[,] array, Action<int, int, T> action, Func<T, bool> selector)
+        public static void Foreach<T>(this T[,] array, Action<int, int, T> action, Func<T, bool> selector)
         {
             for (int y = 0; y < array.GetLength(0); y++)
             {
@@ -180,24 +213,24 @@ namespace TraunisExtensions
                 throw new ArgumentNullException("Parameter \"obj\" cannot be null.");
             }
 
-            object[] conParams = new object[obj.GetType().GetConstructors()[0].GetParameters().Length];
+            object[] conParams = new object[obj.GetType().GetConstructors().Length == 0 ? 0 : obj.GetType().GetConstructors()[0].GetParameters().Length];
+
             T clone = (T)Activator.CreateInstance(typeof(T), conParams)!;
-            var propsOrig = obj.GetType().GetProperties();
-            var propsClon = obj.GetType().GetProperties();
 
-            var fieldsOrig = obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public);
-            var fieldsClon = obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public);
+            var propsOrig = obj.GetType().GetProperties((BindingFlags.NonPublic | BindingFlags.Public) & BindingFlags.Instance);
 
-            foreach (var fields in fieldsOrig.Join(fieldsOrig, inner => inner.Name, outer => outer.Name, (inner, outer) => new FieldInfo[] { inner, outer }))
+            var fieldsOrig = obj.GetType().GetFields((BindingFlags.NonPublic | BindingFlags.Public) & BindingFlags.Instance);
+
+            foreach (var fields in fieldsOrig)
             {
-                fields[1].SetValue(clone, fields[0].GetValue(obj));
+                fields.SetValue(clone, fields.GetValue(obj));
             }
 
-            foreach (var props in propsOrig.Join(propsClon, inner => inner.Name, outer => outer.Name, (inner, outer) => new PropertyInfo[] { inner, outer }))
+            foreach (var props in propsOrig)
             {
-                if (props[0].SetMethod != null)
+                if (props.SetMethod != null)
                 {
-                    props[1].SetValue(clone, props[0].GetValue(obj));
+                    props.SetValue(clone, props.GetValue(obj));
                 }
             }
 
