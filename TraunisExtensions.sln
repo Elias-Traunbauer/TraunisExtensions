@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraunisExtensions", "TraunisExtensions\TraunisExtensions.csproj", "{051C8EFD-98F8-4C7E-B4E6-969FCD3BC47A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{051C8EFD-98F8-4C7E-B4E6-969FCD3BC47A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{051C8EFD-98F8-4C7E-B4E6-969FCD3BC47A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{051C8EFD-98F8-4C7E-B4E6-969FCD3BC47A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{051C8EFD-98F8-4C7E-B4E6-969FCD3BC47A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36B01EC4-B834-41A7-B895-BE9B57F9B959}
+	EndGlobalSection
+EndGlobal
