@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace TraunisExtensions
 {
@@ -235,6 +236,14 @@ namespace TraunisExtensions
             }
 
             return clone!;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool FastHasFlag<T>(this T value, T flag) where T : struct, Enum
+        {
+            ulong val = Convert.ToUInt64(value);
+            ulong flg = Convert.ToUInt64(flag);
+            return (val & flg) != 0;
         }
     }
 }
